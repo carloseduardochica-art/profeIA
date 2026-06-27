@@ -1010,4 +1010,29 @@
                 html2canvas: { scale: 2, useCORS: true },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
                 pagebreak: { mode: ['css', 'legacy'] }
-            }).from(
+            }).from(acta).save().then(() => {
+                acta.style.display = 'none';
+                appCapture.style.display = 'flex';
+                btn.disabled = false;
+                btn.innerHTML = "Descargar Acta Oficial PDF";
+            });
+        }, 800);
+    });
+//]]>
+` + "</sc" + "ript>";
+
+    // =====================================================================
+    // 3. INYECCIÓN EN EL IFRAME (BYPASS)
+    // =====================================================================
+    setTimeout(function() {
+        const iframe = document.getElementById('coliseo-sandbox');
+        if (iframe) {
+            const doc = iframe.contentWindow.document;
+            doc.open();
+            doc.write(htmlPayload);
+            doc.close();
+        }
+    }, 500);
+})();
+//]]>
+</script>
