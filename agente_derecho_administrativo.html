@@ -472,6 +472,10 @@
                     <label>Nombres y Apellidos Completos</label>
                     <input type="text" id="student-name" placeholder="Ej. Carlos Romero" autocomplete="off">
                 </div>
+                <div class="input-group">
+                    <label>Clave API (Docente)</label>
+                    <input type="password" id="api-key-input" placeholder="Pegue la API Key aqu&iacute;..." autocomplete="off">
+                </div>
                 
                 <div id="error-msg" style="color: var(--danger); background: rgba(225, 29, 72, 0.1); padding: 8px; border-radius: 4px; font-size: 14px; margin-bottom: 15px; display: none; font-weight: 600;"></div>
                 <button type="button" class="btn-start" id="btn-start">Iniciar Interrogatorio</button>
@@ -1044,14 +1048,4 @@
     // 3. INYECCIÓN EN EL IFRAME (BYPASS)
     // =====================================================================
     setTimeout(function() {
-        const iframe = document.getElementById('tribunal-sandbox');
-        if (iframe) {
-            const doc = iframe.contentWindow.document;
-            doc.open();
-            doc.write(htmlPayload);
-            doc.close();
-        }
-    }, 500);
-})();
-//]]>
-</script>
+        const iframe = docu
