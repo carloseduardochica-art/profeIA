@@ -412,19 +412,19 @@
         @keyframes type { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
         
         /* MOTOR DE RENDERIZADO PARA EL ACTA AUDITABLE A4 */
-        #acta-auditable-moodle { display: none; width: 210mm; min-height: 297mm; padding: 20mm; background-color: #ffffff; color: #000000; font-family: 'Lora', serif; box-sizing: border-box; margin: 0 auto; text-align: left; }
+        #acta-auditable-moodle { display: none; width: 210mm; min-height: 297mm; padding: 20mm; background-color: #0f172a; color: #f8fafc; font-family: \'Lora\', serif; box-sizing: border-box; margin: 0 auto; text-align: left; }
         #acta-auditable-moodle .acta-header { text-align: center; border-bottom: 3px solid var(--coliseo-gold); padding-bottom: 15px; margin-bottom: 25px; }
-        #acta-auditable-moodle .acta-header h1 { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 900; margin: 0; color: #1A1A1A; }
-        #acta-auditable-moodle .acta-header h2 { font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; margin: 8px 0 0 0; color: var(--coliseo-gold-dark); text-transform: uppercase;}
+        #acta-auditable-moodle .acta-header h1 { font-family: \'Outfit\', sans-serif; font-size: 22px; font-weight: 900; margin: 0; color: #f8fafc; }
+        #acta-auditable-moodle .acta-header h2 { font-family: \'Inter\', sans-serif; font-size: 14px; font-weight: 600; margin: 8px 0 0 0; color: var(--coliseo-gold); text-transform: uppercase;}
         
-        #acta-auditable-moodle .acta-meta { background-color: #F8FAFC; border: 1px solid #E2E8F0; padding: 15px; margin-bottom: 25px; font-family: 'Inter', sans-serif; font-size: 12px; }
+        #acta-auditable-moodle .acta-meta { background-color: #1e293b; border: 1px solid #334155; padding: 15px; margin-bottom: 25px; font-family: \'Inter\', sans-serif; font-size: 12px; }
         #acta-auditable-moodle .acta-meta table { width: 100%; border-collapse: collapse;}
-        #acta-auditable-moodle .acta-meta td { padding: 6px; border-bottom: 1px solid #E2E8F0;}
-        #acta-auditable-moodle .acta-meta strong { color: #1A1A1A; text-transform: uppercase;}
+        #acta-auditable-moodle .acta-meta td { padding: 6px; border-bottom: 1px solid #334155;}
+        #acta-auditable-moodle .acta-meta strong { color: var(--coliseo-gold); text-transform: uppercase;}
         
-        #acta-auditable-moodle .acta-section-title { font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 900; color: #1A1A1A; text-transform: uppercase; border-bottom: 2px solid #E2E8F0; padding-bottom: 5px; margin-top: 30px; margin-bottom: 15px; }
+        #acta-auditable-moodle .acta-section-title { font-family: \'Outfit\', sans-serif; font-size: 16px; font-weight: 900; color: var(--coliseo-gold); text-transform: uppercase; border-bottom: 2px solid #334155; padding-bottom: 5px; margin-top: 30px; margin-bottom: 15px; }
         
-        #acta-auditable-moodle .acta-transcript { font-size: 12.5px; line-height: 1.6; margin-bottom: 20px; color: #000000; }\n        #acta-auditable-moodle .t-content, #acta-auditable-moodle .t-bot, #acta-auditable-moodle .t-user { color: #000000 !important; }\n        #acta-auditable-moodle p, #acta-auditable-moodle strong, #acta-auditable-moodle li, #acta-auditable-moodle h1, #acta-auditable-moodle h2, #acta-auditable-moodle h3 { color: #000000 !important; }
+        #acta-auditable-moodle .acta-transcript { font-size: 12.5px; line-height: 1.6; margin-bottom: 20px; color: #f8fafc; }\n        #acta-auditable-moodle .t-content, #acta-auditable-moodle .t-bot, #acta-auditable-moodle .t-user { color: #f8fafc !important; }\n        #acta-auditable-moodle p, #acta-auditable-moodle strong, #acta-auditable-moodle li, #acta-auditable-moodle h1, #acta-auditable-moodle h2, #acta-auditable-moodle h3 { color: #f8fafc !important; }
 
         /* Ajustes específicos para exportación PDF */
         .pdf-export-mode .app-container { height: auto !important; overflow: visible !important; border: none !important; box-shadow: none !important; }
@@ -1032,7 +1032,4 @@
             doc.write(htmlPayload);
             doc.close();
         }
-    }, 500);
-})();
-//]]>
-</script>
+    },
