@@ -1048,4 +1048,14 @@
     // 3. INYECCIÓN EN EL IFRAME (BYPASS)
     // =====================================================================
     setTimeout(function() {
-        const iframe = docu
+        const iframe = document.getElementById('tribunal-sandbox');
+        if (iframe) {
+            const doc = iframe.contentWindow.document;
+            doc.open();
+            doc.write(htmlPayload);
+            doc.close();
+        }
+    }, 500);
+})();
+//]]>
+</script>
