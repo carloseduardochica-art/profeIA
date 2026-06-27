@@ -928,7 +928,7 @@ async function prepararActaPDF(htmlDictamen) {
     transcriptLog.forEach(log => {
         if(log.text.includes("Inicia la evaluación")) return;
         const roleClass = log.role === 'bot' ? 't-bot' : 't-user';
-        transcriptContainer.innerHTML += "<div class=\'" + roleClass + "\'>" + (log.role === "bot" ? "🤖 MÁQUINA" : "🎓 ESTUDIANTE") + "</div><div class=\'t-content\'>" + log.text + "</div>";
+        transcriptContainer.innerHTML += "<div class='" + roleClass + "'>" + (log.role === "bot" ? "MAQUINA" : "ESTUDIANTE") + "</div><div class='t-content'>" + log.text + "</div>";
     });
     
     // Aseguramos que el dictamen se inyecte correctamente antes de la captura
@@ -986,4 +986,5 @@ document.getElementById('btn-download').addEventListener('click', async () => {
             doc.write(htmlPayload);
             doc.close();
         }
-    }, 50
+    }, 500);
+})();
