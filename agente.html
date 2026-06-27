@@ -915,108 +915,62 @@
         const chatBox = document.getElementById('chat-box');
         chatBox.scrollTop = chatBox.scrollHeight;
     }
-
-    function prepararActaPDF(htmlDictamen) {
-        document.getElementById('pdf-name').innerText = studentData.name;
-        document.getElementById('pdf-id').innerText = studentData.id;
-        document.getElementById('pdf-nodo').innerText = studentData.type;
-        document.getElementById('pdf-date').innerText = new Date().toLocaleString();
-        
-        const transcriptContainer = document.getElementById('pdf-transcript');
-        transcriptContainer.innerHTML = '';
-        
-        transcriptLog.forEach(log => {
-            if(log.text.includes("Inicia la evaluación presentando tu postura")) return;
-            const roleClass = log.role === 'bot' ? 't-bot' : 't-user';
-            const roleName = log.role === 'bot' ? "🤖 MÁQUINA [" + studentData.type + "]" : "🎓 ESTUDIANTE [" + studentData.name + "]";
-            
-            transcriptContainer.innerHTML += "<div class='" + roleClass + "'>" + roleName + "</div><div class='t-content'>" + log.text + "</div>";
-        });
-        
-        document.getElementById('pdf-dictamen').innerHTML = htmlDictamen;
-    }
-
-    const charCounter = document.getElementById('char-counter');
-    const btnSend = document.getElementById('btn-send');
+// Corregido: Función de preparación y sincronización
+async function prepararActaPDF(htmlDictamen) {
+    document.getElementById('pdf-name').innerText = studentData.name;
+    document.getElementById('pdf-id').innerText = studentData.id;
+    document.getElementById('pdf-nodo').innerText = studentData.type;
+    document.getElementById('pdf-date').innerText = new Date().toLocaleString();
     
-    function updateCharCounter() {
-        const textLen = userInputBox.value.trim().length;
-        charCounter.innerText = "Caracteres: " + textLen + " / Rango: 200 - 1500";
-        if (textLen >= 200 && textLen <= 1500) {
-            charCounter.classList.remove('error');
-            btnSend.disabled = false;
-        } else {
-            charCounter.classList.add('error');
-            btnSend.disabled = true;
-        }
-        if(userInputBox.disabled) btnSend.disabled = true;
-    }
-
-    userInputBox.addEventListener('input', () => {
-        updateCharCounter();
+    const transcriptContainer = document.getElementById('pdf-transcript');
+    transcriptContainer.innerHTML = '';
+    
+    transcriptLog.forEach(log => {
+        if(log.text.includes("Inicia la evaluación")) return;
+        const roleClass = log.role === 'bot' ? 't-bot' : 't-user';
+        transcriptContainer.innerHTML += "<div class=\'" + roleClass + "\'>" + (log.role === "bot" ? "🤖 MÁQUINA" : "🎓 ESTUDIANTE") + "</div><div class=\'t-content\'>" + log.text + "</div>";
     });
+    
+    // Aseguramos que el dictamen se inyecte correctamente antes de la captura
+    const dictamenDiv = document.getElementById('pdf-dictamen');
+    dictamenDiv.innerHTML = htmlDictamen;
+    
+    // Forzamos un micro-pausa para que el navegador procese el renderizado del HTML
+    return new Promise(resolve => setTimeout(resolve, 500));
+}
 
-    btnSend.addEventListener('click', () => {
-        if(abortTriggered) return;
-        const text = userInputBox.value.trim();
-        if(text.length < 200 || text.length > 1500) {
-            alert("Vulneración de Formato. El argumento debe poseer entre 200 y 1500 caracteres."); return;
-        }
-        round++;
-        callGemini(text);
-    });
+// Corregido: Botón de descarga con espera de renderizado
+document.getElementById('btn-download').addEventListener('click', async () => {
+    const acta = document.getElementById('acta-auditable-moodle');
+    const appCapture = document.getElementById('app-capture');
+    const btn = document.getElementById('btn-download');
+    
+    btn.innerHTML = "Generando PDF Oficial...";
+    btn.disabled = true;
+    
+    // 1. Mostrar contenedor para captura
+    acta.style.display = 'block';
+    appCapture.style.display = 'none';
+    
+    // 2. Asegurar que los estilos de exportación se apliquen
+    acta.classList.add('pdf-export-mode');
 
-    function appendMessage(sender, text, isHTML = false, extraClass = '') {
-        const chatBox = document.getElementById('chat-box');
-        const msgDiv = document.createElement('div');
-        msgDiv.className = "message " + sender + (extraClass ? " " + extraClass : "");
-        
-        const avatarDiv = document.createElement('div');
-        avatarDiv.className = 'avatar';
-        avatarDiv.innerText = sender === 'bot' ? 'IA Macroeconómica' : studentData.name;
-        
-        const textDiv = document.createElement('div');
-        if (isHTML) textDiv.innerHTML = text;
-        else textDiv.innerText = text;
-        
-        msgDiv.appendChild(avatarDiv);
-        msgDiv.appendChild(textDiv);
-        
-        chatBox.insertBefore(msgDiv, document.getElementById('typing-indicator'));
-        chatBox.scrollTop = chatBox.scrollHeight;
-        
-        transcriptLog.push({
-            role: sender,
-            text: isHTML ? text.replace(/<[^>]*>?/gm, '') : text
-        });
-    }
+    // 3. Captura con html2pdf
+    await html2pdf().set({
+        margin: 15,
+        filename: "Acta_ColiseoMacro_" + studentData.id + ".pdf",
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, logging: false },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    }).from(acta).save();
 
-    document.getElementById('btn-download').addEventListener('click', () => {
-        const acta = document.getElementById('acta-auditable-moodle');
-        const appCapture = document.querySelector('.app-container');
-        const btn = document.getElementById('btn-download');
-        
-        btn.innerHTML = "Generando PDF Oficial...";
-        btn.disabled = true;
-        
-        appCapture.style.display = 'none';
-        acta.style.display = 'block';
-        
-        setTimeout(() => {
-            html2pdf().set({
-                margin: 15,
-                filename: "Acta_ColiseoMacro_" + studentData.id + ".pdf",
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['css', 'legacy'] }
-            }).from(acta).save().then(() => {
-                acta.style.display = 'none';
-                appCapture.style.display = 'flex';
-                btn.disabled = false;
-                btn.innerHTML = "Descargar Acta Oficial PDF";
-            });
-        }, 800);
+    // 4. Restaurar vista
+    acta.style.display = 'none';
+    appCapture.style.display = 'flex';
+    btn.disabled = false;
+    btn.innerHTML = "Descargar Acta Oficial PDF";
+});
+            }, 800);
     });
 //]]>
 ` + "</sc" + "ript>";
@@ -1032,7 +986,4 @@
             doc.write(htmlPayload);
             doc.close();
         }
-    }, 500);
-})();
-//]]>
-</script>
+    }, 50
