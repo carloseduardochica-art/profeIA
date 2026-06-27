@@ -1,4 +1,4 @@
-<!--
+e<!--
 =============================================================================
  SISTEMA DE ENCAPSULACIÓN ABSOLUTA (BYPASS PARA MOODLE)
  VERSIÓN: TRIBUNAL DE AUDITORÍA (DERECHO ADMINISTRATIVO ECUATORIANO)
@@ -472,6 +472,10 @@
                     <label>Nombres y Apellidos Completos</label>
                     <input type="text" id="student-name" placeholder="Ej. Carlos Romero" autocomplete="off">
                 </div>
+                <div class="input-group">
+                    <label>Clave API (Docente)</label>
+                    <input type="password" id="api-key-input" placeholder="Pegue la API Key aquí..." autocomplete="off">
+                </div>
                 
                 <div id="error-msg" style="color: var(--danger); background: rgba(225, 29, 72, 0.1); padding: 8px; border-radius: 4px; font-size: 14px; margin-bottom: 15px; display: none; font-weight: 600;"></div>
                 <button type="button" class="btn-start" id="btn-start">Iniciar Interrogatorio</button>
@@ -561,15 +565,7 @@
     </div>
 
     <script>
-        let API_KEY = sessionStorage.getItem("GEMINI_API_KEY");
-        if (!API_KEY || API_KEY === "${CLAVE_API_DOCENTE}" || API_KEY.trim() === "") {
-            API_KEY = prompt("Por favor, ingrese la Clave API (API Key) proporcionada por el profesor para activar la IA:");
-            if (API_KEY) {
-                sessionStorage.setItem("GEMINI_API_KEY", API_KEY);
-            } else {
-                alert("Advertencia: Sin la Clave API el simulador no podrá conectarse con la IA. Recarga la página si deseas ingresarla.");
-            }
-        }
+        let API_KEY = sessionStorage.getItem("GEMINI_API_KEY") || "";
         
         window.onerror = function(msg, url, lineNo, columnNo, error) {
             const errDiv = document.getElementById('error-msg');
@@ -699,6 +695,17 @@
             try {
                 const idInput = document.getElementById('student-id').value.trim();
                 const nameInput = document.getElementById('student-name').value.trim();
+                const apiInput = document.getElementById('api-key-input').value.trim();
+                
+                if (apiInput) {
+                    API_KEY = apiInput;
+                    sessionStorage.setItem("GEMINI_API_KEY", API_KEY);
+                } else if (!API_KEY) {
+                    errorMsg.innerText = "Debe ingresar la Clave API para continuar.";
+                    errorMsg.style.display = 'block';
+                    btn.innerText = "Iniciar Interrogatorio";
+                    return;
+                }
                 
                 errorMsg.style.display = 'none';
                 
@@ -1035,3 +1042,20 @@
     ` + "</sc" + "ript>" + `
     </body>
     </html>
+    `;
+
+    // =====================================================================
+    // 3. INYECCIÓN EN EL IFRAME (BYPASS)
+    // =====================================================================
+    setTimeout(function() {
+        const iframe = document.getElementById('tribunal-sandbox');
+        if (iframe) {
+            const doc = iframe.contentWindow.document;
+            doc.open();
+            doc.write(htmlPayload);
+            doc.close();
+        }
+    }, 500);
+})();
+//]]>
+</script>
