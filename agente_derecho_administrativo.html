@@ -1,4 +1,4 @@
-e<!--
+<!--
 =============================================================================
  SISTEMA DE ENCAPSULACIÓN ABSOLUTA (BYPASS PARA MOODLE)
  VERSIÓN: TRIBUNAL DE AUDITORÍA (DERECHO ADMINISTRATIVO ECUATORIANO)
@@ -415,7 +415,7 @@ e<!--
         @keyframes type { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
         
         /* MOTOR DE RENDERIZADO PARA EL ACTA AUDITABLE A4 */
-        #acta-auditable-moodle { display: none; width: 210mm; min-height: 297mm; padding: 20mm; background-color: #ffffff; color: #000000; font-family: 'Lora', serif; box-sizing: border-box; margin: 0 auto; text-align: left; }
+        #acta-auditable-moodle { display: none; width: 210mm; min-height: 297mm; padding: 20mm; background-color: #0f172a; color: #f8fafc; font-family: \'Lora\', serif; box-sizing: border-box; margin: 0 auto; text-align: left; }
         #acta-auditable-moodle .acta-header { text-align: center; border-bottom: 3px solid var(--justicia-gold); padding-bottom: 15px; margin-bottom: 25px; }
         #acta-auditable-moodle .acta-header h1 { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 900; margin: 0; color: #111827; }
         #acta-auditable-moodle .acta-header h2 { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 800; margin: 8px 0 0 0; color: var(--justicia-gold-dark); text-transform: uppercase; letter-spacing: 1px;}
@@ -427,10 +427,10 @@ e<!--
         
         #acta-auditable-moodle .acta-section-title { font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 900; color: #1e293b; text-transform: uppercase; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-top: 30px; margin-bottom: 15px; letter-spacing: 0.5px; }
         
-        #acta-auditable-moodle .acta-transcript { font-size: 12px; line-height: 1.6; margin-bottom: 20px; }
+        #acta-auditable-moodle .acta-transcript { font-size: 12px; line-height: 1.6; margin-bottom: 20px; color: #f8fafc; }
         #acta-auditable-moodle .acta-transcript .t-bot { font-weight: bold; color: #b45309; margin-top: 15px; font-family: 'Outfit', sans-serif; text-transform: uppercase; font-size: 11px;}
         #acta-auditable-moodle .acta-transcript .t-user { font-weight: bold; color: #1e3a8a; margin-top: 15px; font-family: 'Outfit', sans-serif; text-transform: uppercase; font-size: 11px;}
-        #acta-auditable-moodle .acta-transcript .t-content { background: #fdfdfd; border-left: 3px solid #cbd5e1; padding-left: 10px; margin-top: 5px; }
+        #acta-auditable-moodle .acta-transcript .t-content { background: #1e293b; border-left: 3px solid #3b82f6; padding-left: 10px; margin-top: 5px; color: #f8fafc !important; }\n        #acta-auditable-moodle p, #acta-auditable-moodle strong, #acta-auditable-moodle li { color: #f8fafc !important; }
         
         #acta-auditable-moodle .leyenda-docente { font-family: 'Inter', sans-serif; font-size: 10px; font-weight: bold; color: #64748b; margin-top: 40px; text-align: center; border-top: 1px dashed #cbd5e1; padding-top: 15px; text-transform: uppercase; }
         #acta-auditable-moodle .acta-footer { font-family: 'Inter', sans-serif; font-size: 9px; color: #94a3b8; margin-top: 20px; text-align: center; line-height: 1.4; }
@@ -471,10 +471,6 @@ e<!--
                 <div class="input-group">
                     <label>Nombres y Apellidos Completos</label>
                     <input type="text" id="student-name" placeholder="Ej. Carlos Romero" autocomplete="off">
-                </div>
-                <div class="input-group">
-                    <label>Clave API (Docente)</label>
-                    <input type="password" id="api-key-input" placeholder="Pegue la API Key aquí..." autocomplete="off">
                 </div>
                 
                 <div id="error-msg" style="color: var(--danger); background: rgba(225, 29, 72, 0.1); padding: 8px; border-radius: 4px; font-size: 14px; margin-bottom: 15px; display: none; font-weight: 600;"></div>
@@ -695,7 +691,7 @@ e<!--
             try {
                 const idInput = document.getElementById('student-id').value.trim();
                 const nameInput = document.getElementById('student-name').value.trim();
-                const apiInput = document.getElementById('api-key-input').value.trim();
+                const apiInput = document.getElementById('api-key-input') ? document.getElementById('api-key-input').value.trim() : "";
                 
                 if (apiInput) {
                     API_KEY = apiInput;
