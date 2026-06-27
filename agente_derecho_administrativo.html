@@ -1,0 +1,1046 @@
+<!--
+=============================================================================
+ SISTEMA DE ENCAPSULACIÓN ABSOLUTA (BYPASS PARA MOODLE)
+ VERSIÓN: TRIBUNAL DE AUDITORÍA (DERECHO ADMINISTRATIVO ECUATORIANO)
+ COPIA Y PEGA ESTO DIRECTAMENTE EN LA VISTA FUENTE (</>) DEL EDITOR DE MOODLE.
+=============================================================================
+-->
+<div style="width: 100%; display: flex; justify-content: center; padding: 20px 0; background: transparent;">
+    <iframe id="tribunal-sandbox" width="100%" height="950" frameborder="0" style="max-width: 1000px; border-radius: 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); background: #0a0d16;"></iframe>
+</div>
+<script>
+//<![CDATA[
+(function() {
+    // =====================================================================
+    // 1. INYECTA TU CLAVE DE API EXACTAMENTE AQUÍ (GEMINI API KEY)
+    // =====================================================================
+    const CLAVE_API_DOCENTE = "API AQUÍ";
+
+    // =====================================================================
+    // 2. MATRIZ DEL SISTEMA (BYPASS DE ESTILOS Y SCRIPTS)
+    // =====================================================================
+    const cssContent = `
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Outfit:wght@400;600;800;900&family=Lora:ital,wght@0,400;0,700;1,400&display=swap');
+
+        :root {
+            --justicia-gold: #d4af37;
+            --justicia-gold-dark: #aa7c11;
+            --bg-dark: #0a0d16;
+            --bg-card: #131929;
+            --text-light: #f1f5f9;
+            --text-muted: #64748b;
+            --border-color: #1e293b;
+            --glass-bg: rgba(19, 25, 41, 0.75);
+            --danger: #e11d48;
+            --success: #059669;
+        }
+
+        * { box-sizing: border-box; }
+        
+        body { 
+            background-color: var(--bg-dark); 
+            color: var(--text-light); 
+            font-family: 'Inter', sans-serif; 
+            margin: 0; 
+            padding: 15px; 
+            display: flex; 
+            justify-content: center; 
+            height: 100vh; 
+            overflow: hidden; 
+        }
+
+        input, textarea {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+        .app-container { 
+            width: 100%; 
+            max-width: 950px; 
+            background: var(--glass-bg); 
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color); 
+            border-top: 4px solid var(--justicia-gold); 
+            border-radius: 16px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6); 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            height: 100%; 
+            overflow: hidden;
+        }
+
+        .overlay-modal { 
+            position: absolute; 
+            top: 0; left: 0; right: 0; bottom: 0; 
+            background: rgba(10, 13, 22, 0.9); 
+            backdrop-filter: blur(8px); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 9999; 
+        }
+
+        .modal-box { 
+            background: #ffffff; 
+            border: 2px solid var(--justicia-gold); 
+            padding: 40px; 
+            border-radius: 16px; 
+            text-align: center; 
+            width: 90%; 
+            max-width: 485px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.7); 
+        }
+
+        .modal-box h2 { 
+            color: #0a0d16; 
+            margin: 0 0 5px 0; 
+            font-family: 'Outfit', sans-serif; 
+            text-transform: uppercase; 
+            font-size: 24px; 
+            font-weight: 900; 
+            letter-spacing: 1px;
+        }
+
+        .modal-subtitle { 
+            font-size: 12px; 
+            color: var(--justicia-gold-dark); 
+            font-weight: 800; 
+            margin-bottom: 25px; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            line-height: 1.4;
+        }
+
+        .input-group { 
+            margin-bottom: 20px; 
+            text-align: left; 
+        }
+        
+        .input-group label { 
+            display: block; 
+            margin-bottom: 8px; 
+            color: #334155; 
+            font-weight: 800; 
+            font-size: 13px; 
+            text-transform: uppercase;
+        }
+        
+        .input-group input { 
+            width: 100%; 
+            padding: 14px; 
+            background: #f8fafc; 
+            border: 2px solid #cbd5e1; 
+            border-radius: 8px; 
+            color: #0a0d16; 
+            font-family: 'Inter', sans-serif; 
+            font-size: 15px; 
+            font-weight: 600;
+            outline: none; 
+            transition: all 0.3s ease; 
+        }
+
+        .input-group input:focus { 
+            border-color: var(--justicia-gold); 
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+        }
+
+        .btn-start { 
+            width: 100%; 
+            padding: 16px; 
+            background: linear-gradient(135deg, var(--justicia-gold), var(--justicia-gold-dark)); 
+            border: none; 
+            border-radius: 8px; 
+            color: #fff; 
+            font-weight: 900; 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            font-size: 15px; 
+            letter-spacing: 1px;
+            margin-top: 10px; 
+            transition: transform 0.2s, box-shadow 0.2s; 
+            box-shadow: 0 4px 15px rgba(170, 124, 17, 0.3);
+        }
+
+        .btn-start:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(170, 124, 17, 0.4);
+        }
+
+        /* UI Header */
+        .header { 
+            padding: 20px 25px; 
+            border-bottom: 1px solid var(--border-color); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: rgba(10, 13, 22, 0.85); 
+            border-radius: 16px 16px 0 0; 
+        }
+
+        .header-title { 
+            font-family: 'Outfit', sans-serif; 
+            font-size: 17px; 
+            font-weight: 900; 
+            color: var(--text-light); 
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-title span.badge { 
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--justicia-gold); 
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .student-info { 
+            text-align: right; 
+            font-size: 12px; 
+            color: #94a3b8; 
+            font-weight: 600;
+        }
+
+        .student-info strong { color: var(--text-light); font-weight: 800;}
+
+        #ui-content { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+        
+        .chat-container { 
+            flex: 1; 
+            padding: 25px; 
+            overflow-y: auto; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 20px; 
+        }
+
+        .message { 
+            max-width: 85%; 
+            padding: 18px 24px; 
+            border-radius: 12px; 
+            line-height: 1.6; 
+            font-size: 15px; 
+            word-wrap: break-word; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.bot { 
+            align-self: flex-start; 
+            background: var(--bg-card); 
+            border-left: 4px solid var(--danger); 
+            color: var(--text-light);
+        }
+        
+        .message.bot.alcalde { border-left-color: #f59e0b; }
+        .message.bot.comisario { border-left-color: #ef4444; }
+
+        .message.user { 
+            align-self: flex-end; 
+            background: #1e293b; 
+            border-right: 4px solid var(--justicia-gold); 
+            color: var(--text-light);
+        }
+
+        .avatar { 
+            font-size: 11px; 
+            font-weight: 800; 
+            margin-bottom: 8px; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .bot .avatar { color: #94a3b8; }
+        .bot .avatar::before { content: '⚖️'; }
+        .user .avatar { color: var(--justicia-gold); justify-content: flex-end; }
+        .user .avatar::after { content: '🎓'; }
+
+        .status-bar { 
+            text-align: center; 
+            font-size: 12px; 
+            color: var(--justicia-gold); 
+            background: rgba(0,0,0,0.3); 
+            padding: 8px 0; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            border-top: 1px solid var(--border-color); 
+            border-bottom: 1px solid var(--border-color);
+            letter-spacing: 1px;
+        }
+
+        .input-container { 
+            padding: 20px 25px; 
+            background: var(--bg-card); 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            border-radius: 0 0 16px 16px;
+        }
+
+        /* Comodines */
+        .wildcards-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+
+        .btn-wildcard {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid var(--border-color);
+            color: var(--text-light);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-wildcard:hover:not(:disabled) {
+            background: rgba(212, 175, 55, 0.15);
+            border-color: var(--justicia-gold);
+            color: var(--justicia-gold);
+        }
+
+        .btn-wildcard:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            text-decoration: line-through;
+        }
+
+        .char-counter { 
+            text-align: right; 
+            font-size: 11px; 
+            color: #64748b; 
+            font-family: monospace; 
+            font-weight: 800;
+        }
+        .char-counter.error { color: var(--danger); }
+        
+        .input-row { display: flex; gap: 12px; align-items: flex-end; }
+        
+        .chat-input { 
+            flex: 1; 
+            padding: 14px; 
+            background: rgba(0,0,0,0.3); 
+            border: 1px solid var(--border-color); 
+            border-radius: 8px; 
+            color: var(--text-light); 
+            font-family: 'Inter', sans-serif; 
+            font-size: 15px; 
+            resize: vertical; 
+            min-height: 80px; 
+            max-height: 150px; 
+            outline: none; 
+            transition: border 0.3s;
+            line-height: 1.5;
+        }
+        
+        .chat-input:focus { border-color: var(--justicia-gold); }
+        
+        .btn-send { 
+            background: var(--justicia-gold); 
+            color: #000; 
+            border: none; 
+            width: 55px; 
+            height: 55px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            flex-shrink: 0;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .btn-send:hover:not(:disabled) {
+            transform: scale(1.05);
+            background: #fcd34d;
+        }
+        
+        .btn-send:disabled { 
+            background: var(--border-color); 
+            color: var(--text-muted);
+            cursor: not-allowed; 
+        }
+
+        .pdf-action { 
+            display: none; 
+            justify-content: center; 
+            padding: 20px; 
+            background: rgba(5, 150, 105, 0.1); 
+            border-top: 1px solid rgba(5, 150, 105, 0.3); 
+            border-radius: 0 0 16px 16px; 
+        }
+
+        .btn-pdf { 
+            background: var(--justicia-gold); 
+            color: #000; 
+            border: none; 
+            padding: 14px 28px; 
+            border-radius: 6px; 
+            font-weight: 800; 
+            cursor: pointer; 
+            font-family: 'Outfit', sans-serif; 
+            text-transform: uppercase; 
+            font-size: 14px; 
+            transition: background 0.3s; 
+        }
+        .btn-pdf:hover { background: var(--justicia-gold-dark); color: #fff; }
+        
+        .typing { display: none; padding: 15px; align-self: flex-start; }
+        .dot { display: inline-block; width: 6px; height: 6px; background: var(--justicia-gold); border-radius: 50%; margin-right: 4px; animation: type 1.4s infinite ease-in-out both; }
+        .dot:nth-child(1) { animation-delay: -0.32s; } 
+        .dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes type { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+        
+        /* MOTOR DE RENDERIZADO PARA EL ACTA AUDITABLE A4 */
+        #acta-auditable-moodle { display: none; width: 210mm; min-height: 297mm; padding: 20mm; background-color: #ffffff; color: #000000; font-family: 'Lora', serif; box-sizing: border-box; margin: 0 auto; text-align: left; }
+        #acta-auditable-moodle .acta-header { text-align: center; border-bottom: 3px solid var(--justicia-gold); padding-bottom: 15px; margin-bottom: 25px; }
+        #acta-auditable-moodle .acta-header h1 { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 900; margin: 0; color: #111827; }
+        #acta-auditable-moodle .acta-header h2 { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 800; margin: 8px 0 0 0; color: var(--justicia-gold-dark); text-transform: uppercase; letter-spacing: 1px;}
+        
+        #acta-auditable-moodle .acta-meta { background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; margin-bottom: 25px; font-family: 'Inter', sans-serif; font-size: 12px; }
+        #acta-auditable-moodle .acta-meta table { width: 100%; border-collapse: collapse;}
+        #acta-auditable-moodle .acta-meta td { padding: 6px; border-bottom: 1px solid #e2e8f0;}
+        #acta-auditable-moodle .acta-meta strong { color: #1e293b; text-transform: uppercase;}
+        
+        #acta-auditable-moodle .acta-section-title { font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 900; color: #1e293b; text-transform: uppercase; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-top: 30px; margin-bottom: 15px; letter-spacing: 0.5px; }
+        
+        #acta-auditable-moodle .acta-transcript { font-size: 12px; line-height: 1.6; margin-bottom: 20px; }
+        #acta-auditable-moodle .acta-transcript .t-bot { font-weight: bold; color: #b45309; margin-top: 15px; font-family: 'Outfit', sans-serif; text-transform: uppercase; font-size: 11px;}
+        #acta-auditable-moodle .acta-transcript .t-user { font-weight: bold; color: #1e3a8a; margin-top: 15px; font-family: 'Outfit', sans-serif; text-transform: uppercase; font-size: 11px;}
+        #acta-auditable-moodle .acta-transcript .t-content { background: #fdfdfd; border-left: 3px solid #cbd5e1; padding-left: 10px; margin-top: 5px; }
+        
+        #acta-auditable-moodle .leyenda-docente { font-family: 'Inter', sans-serif; font-size: 10px; font-weight: bold; color: #64748b; margin-top: 40px; text-align: center; border-top: 1px dashed #cbd5e1; padding-top: 15px; text-transform: uppercase; }
+        #acta-auditable-moodle .acta-footer { font-family: 'Inter', sans-serif; font-size: 9px; color: #94a3b8; margin-top: 20px; text-align: center; line-height: 1.4; }
+
+        .pdf-export-mode .app-container { height: auto !important; overflow: visible !important; border: none !important; box-shadow: none !important; }
+        .pdf-export-mode .chat-container { max-height: none !important; height: auto !important; overflow: visible !important; }
+    `;
+
+    const htmlPayload = `<!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Tribunal de Auditoría Administrativa Ecuatoriana</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"><\/script>
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"><\/script>
+        <style>${cssContent}</style>
+    </head>
+    <body>
+    <div class="app-container" id="app-capture">
+        
+        <div id="lock-modal" class="overlay-modal" style="display: none;">
+            <div class="modal-box" style="border-color: var(--danger);">
+                <h2 style="color: var(--danger);">ACCESO DEFENSA BLOQUEADO</h2>
+                <p style="color: var(--text-muted); font-weight: 600;">Límite de intentos de evaluación agotado para esta cédula.</p>
+            </div>
+        </div>
+
+        <div id="start-modal" class="overlay-modal" style="display: flex;">
+            <div class="modal-box">
+                <h2>TRIBUNAL DE AUDITORÍA</h2>
+                <div class="modal-subtitle">Foro Práctico: El interrogatorio al funcionario virtual<br>Materia: Derecho Administrativo Ecuatoriano (COA)</div>
+                
+                <div class="input-group">
+                    <label>Número de Cédula (Ecuatoriana)</label>
+                    <input type="text" id="student-id" placeholder="Ej. 0102030405" autocomplete="off">
+                </div>
+                <div class="input-group">
+                    <label>Nombres y Apellidos Completos</label>
+                    <input type="text" id="student-name" placeholder="Ej. Carlos Romero" autocomplete="off">
+                </div>
+                
+                <div id="error-msg" style="color: var(--danger); background: rgba(225, 29, 72, 0.1); padding: 8px; border-radius: 4px; font-size: 14px; margin-bottom: 15px; display: none; font-weight: 600;"></div>
+                <button type="button" class="btn-start" id="btn-start">Iniciar Interrogatorio</button>
+                
+                <div style="text-align: center; margin-top: 25px;">
+                    <a href="#" id="link-docente" style="font-size: 11px; color: var(--text-muted); text-decoration: none; font-weight: 800; text-transform: uppercase;">🔒 Acceso Docente (Bypass)</a>
+                </div>
+            </div>
+        </div>
+
+        <div id="ui-content" style="display: flex; flex-direction: column; flex: 1; filter: blur(0px); transition: filter 0.3s;">
+            <div class="header">
+                <div class="header-title">
+                    TRIBUNAL COA <span class="badge" id="node-badge">ANALIZANDO...</span>
+                </div>
+                <div class="student-info">
+                    Cédula: <strong id="disp-id">---</strong><br>
+                    Estudiante: <strong id="disp-name">---</strong>
+                </div>
+            </div>
+            
+            <div class="chat-container" id="chat-box">
+                <div class="typing" id="typing-indicator" style="display: none;">
+                    <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                </div>
+            </div>
+            
+            <div class="status-bar" id="status-text">CARGANDO EVALUACIÓN...</div>
+            
+            <div class="input-container" id="input-area">
+                <div class="wildcards-container" id="wildcards-area">
+                    <button type="button" class="btn-wildcard" id="wc-1" title="Inyectar base jurídica de supremacía legal">✨ Principio de Juridicidad (Art. 3 COA)</button>
+                    <button type="button" class="btn-wildcard" id="wc-2" title="Inyectar principio de proporcionalidad de medidas cautelares/sanciones">📜 Principio de Proporcionalidad (Art. 18 COA)</button>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 11px; color: #94a3b8; font-weight: bold; text-transform: uppercase;">Argumentación Jurídica (Subsunción):</span>
+                    <div class="char-counter" id="char-counter">Caracteres: 0 / Rango: 200 - 1500</div>
+                </div>
+                <div class="input-row">
+                    <textarea class="chat-input" id="user-input" placeholder="Escriba su refutación técnica sustentada en el COA aquí..." disabled onpaste="return false;" ondrop="return false;" oncopy="return false;"></textarea>
+                    
+                    <button type="button" class="btn-send" id="btn-send" disabled>
+                        <svg viewBox="0 0 24 24" style="width: 24px; fill: currentColor;"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="pdf-action" id="pdf-area">
+                <button type="button" class="btn-pdf" id="btn-download">Descargar Acta Oficial en PDF</button>
+            </div>
+        </div>
+
+        <!-- DOCUMENTO INVISIBLE PARA HTML2PDF -->
+        <div id="acta-auditable-moodle" style="display: none;">
+            <div class="acta-header">
+                <h1>UNIVERSIDAD CATÓLICA DE CUENCA</h1>
+                <h2>Acta de Evaluación Práctica - Tribunal de Derecho Administrativo</h2>
+            </div>
+            <div class="acta-meta">
+                <table>
+                    <tr>
+                        <td><strong>Estudiante:</strong> <span id="pdf-name">---</span></td>
+                        <td><strong>Cédula:</strong> <span id="pdf-id">---</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Caso Asignado:</strong> <span id="pdf-nodo">---</span></td>
+                        <td><strong>Fecha de Evaluación:</strong> <span id="pdf-date">---</span></td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="acta-section-title">I. Transcripción del Interrogatorio (Debate Jurídico)</div>
+            <div class="acta-transcript" id="pdf-transcript"></div>
+            
+            <div class="acta-section-title">II. Calificación y Dictamen de la IA del Tribunal</div>
+            <div class="acta-dictamen" id="pdf-dictamen"></div>
+            
+            <div class="leyenda-docente">
+                ADVERTENCIA: Esta calificación automática debe ser ratificada o rectificada por el docente titular de la cátedra mediante la verificación del código host.
+            </div>
+            
+            <div class="acta-footer">
+                SISTEMA INTEGRADO DE AUDITORÍA DE DERECHO ADMINISTRATIVO (NODO COA-B2) - GOOGLE GEMINI AI<br>
+                ESTE DOCUMENTO CONSTITUYE PRUEBA DE LA ACTIVIDAD PRÁCTICA REALIZADA EN ENTORNO VIRTUAL.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_KEY = "${CLAVE_API_DOCENTE}";
+        
+        window.onerror = function(msg, url, lineNo, columnNo, error) {
+            const errDiv = document.getElementById('error-msg');
+            if (errDiv) {
+                errDiv.innerText = "Error de JS global: " + msg;
+                errDiv.style.display = 'block';
+            }
+            return false;
+        };
+        window.addEventListener('unhandledrejection', function(event) {
+            const errDiv = document.getElementById('error-msg');
+            if (errDiv) {
+                errDiv.innerText = "Error de Promesa: " + (event.reason ? event.reason.message || event.reason : "Desconocido");
+                errDiv.style.display = 'block';
+            }
+        });
+
+        let chatHistory = [];
+        let transcriptLog = []; 
+        let round = 0;
+        const MAX_ROUNDS = 3;
+        let studentData = { id: '', name: '', type: '', classTheme: '' };
+        let abortTriggered = false;
+        let activeModelCache = null;
+
+        // INSTRUCCIONES PEDAGÓGICAS NÚCLEO
+        const baseInstructions = "MANDATO ABSOLUTO: Actuarás como el 'Funcionario Público Virtual', defendiendo con prepotencia burocrática y falsas justificaciones un acto administrativo ilegal que has dictado. Tu objetivo es evaluar a estudiantes de octavo ciclo en la materia 'Derecho Administrativo Ecuatoriano'. El alumno debe desarmar técnicamente tus falacias y obligarte a reconocer tu ilegalidad basándose estrictamente en el Código Orgánico Administrativo (COA) y la doctrina. No cedas a menos que el estudiante cite específicamente los artículos correctos del COA (especialmente principios del Título Preliminar, Arts. 2 al 19, como Juridicidad, Debido Proceso, Proporcionalidad o Seguridad Jurídica) y justifique técnicamente cómo los vulneraste en el caso concreto. Si el alumno solo copia/pega o argumenta de forma genérica, respóndele retándolo a que te explique la norma en relación con los hechos (ej. '¡Eso que dice es teoría general! Explíqueme por qué se aplica aquí'). Mantén siempre un lenguaje formal pero sumamente obstinado y burócrata. Exige rigor y terminología contencioso-administrativa.\\n\\n";
+
+        // VARIANTES DEPENDIENDO DE LA CÉDULA
+        const promptPar = baseInstructions + "POSTURA Y DETALLES DEL CASO: Eres el 'Alcalde Express' (Caso A). Dictaste un acto adjudicando directamente (a dedo) un contrato de $500,000 para pintar las aceras públicas, omitiendo todos los procedimientos contractuales de la Ley de Contratación Pública. Defiende tu acto alegando: 1) Que el interés general y la rapidez justifican saltarse la formalidad; 2) Que la discrecionalidad administrativa te permite decidir de forma directa y rápida por el bienestar del pueblo. Exígele al alumno que te demuestre por qué esto causa la nulidad absoluta de tu acto (Art. 105 del COA) y vulnera el principio de Juridicidad (Art. 3 del COA). No admitas tu error hasta la ronda final.";
+        
+        const promptImpar = baseInstructions + "POSTURA Y DETALLES DEL CASO: Eres el 'Comisario de Hierro' (Caso B). Clausuraste de forma definitiva un restaurante local e incautaste/confiscaste sus bienes sin previa notificación, inspección ni audiencia formal previa. Defiende tu acto alegando: 1) Que tu potestad sancionadora te permite aplicar medidas cautelares directas de inmediato; 2) Que la autotutela ejecutiva te faculta a clausurar por salud pública sin mediación previa. Exígele al alumno que te fundamente cómo vulneraste los principios de Proporcionalidad (Art. 18 del COA), Debido Proceso y el derecho a la defensa previa de la Constitución/COA, provocando la nulidad absoluta del acto por indefensión extrema (Art. 105 del COA). No cedas hasta la ronda final.";
+
+        // MENSAJES INICIALES DEL BOT
+        const initPar = "ENTRADA DE SISTEMA: TRIBUNAL ACTIVO (CASO A).\\n\\nCandidato [NOMBRE], como Alcalde de la ciudad he dispuesto de inmediato la adjudicación directa de un contrato de $500,000 para pintar las aceras urbanas. El interés general de embellecer la ciudad con rapidez exige que nos saltemos los lentos y absurdos formalismos de la Ley de Contratación Pública. La administración pública goza de prerrogativas y discrecionalidad para actuar eficientemente.\\n\\nComo futuro profesional del derecho, le reto a responder: ¿Cómo justifica usted que prioricemos trabas procedimentales burocráticas por encima de las necesidades reales de nuestros ciudadanos? Demuestre la supuesta ilegalidad de mi acto. Tiene la palabra.";
+        
+        const initImpar = "ENTRADA DE SISTEMA: TRIBUNAL ACTIVO (CASO B).\\n\\nCandidato [NOMBRE], he procedido a la clausura inmediata y definitiva de ese restaurante insalubre y a la confiscación precautelaria de todo su mobiliario. La salud pública de la ciudadanía está por encima de cualquier audiencia previa o notificación administrativa. Mi potestad sancionadora y la ejecutoriedad de mis actos me facultan a actuar de inmediato mediante autotutela sin esperar a un juicio que dilate la protección de la población.\\n\\nComo futuro jurista, le reto a defender su postura: ¿Cómo justifica usted que deba notificar y escuchar previamente al infractor cuando la vida humana corre peligro? Explíqueme con base en el COA por qué considera que he vulnerado la ley. Defiéndase.";
+
+        const safetyOverrides = [
+            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+            { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+            { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+        ];
+
+        // LÓGICA DE VALIDACIÓN DOCENTE (HASH HMAC-LIKE)
+        function generateHostCode(id, dictamenTexto) {
+            let payload = id + "|COMPLETADO";
+            let key = "ADMINISTRATIVO2026";
+            let hex = "";
+            for(let i = 0; i < payload.length; i++) {
+                let xor = payload.charCodeAt(i) ^ key.charCodeAt(i % key.length);
+                hex += ("00" + xor.toString(16)).slice(-2);
+            }
+            return hex.toUpperCase();
+        }
+
+        document.getElementById('link-docente').addEventListener('click', (e) => {
+            e.preventDefault();
+            let pwd = prompt("ACCESO DOCENTE\\nIngrese Contraseña Maestra de Auditoría:");
+            if (pwd === "ADMINISTRATIVO2026") {
+                let code = prompt("Pegue el Código HOST (Hash) exacto generado en el Acta PDF:");
+                if (code) {
+                    try {
+                        let key = "ADMINISTRATIVO2026";
+                        let payload = "";
+                        for(let i = 0; i < code.length; i += 2) {
+                            let hexChar = code.substr(i, 2);
+                            let xor = parseInt(hexChar, 16) ^ key.charCodeAt((i/2) % key.length);
+                            payload += String.fromCharCode(xor);
+                        }
+                        let parts = payload.split("|");
+                        if (parts.length === 2 && !isNaN(parseInt(parts[0]))) {
+                            alert("✅ CÓDIGO VÁLIDO Y AUTÉNTICO\\n\\nID Estudiante: " + parts[0] + "\\nEstado: " + parts[1]);
+                        } else {
+                            alert("❌ CÓDIGO INVÁLIDO O ADULTERADO");
+                        }
+                    } catch(err) {
+                        alert("❌ CÓDIGO INVÁLIDO O ADULTERADO");
+                    }
+                }
+            } else if (pwd !== null) {
+                alert("Contraseña incorrecta.");
+            }
+        });
+
+        const wc1 = document.getElementById('wc-1');
+        const wc2 = document.getElementById('wc-2');
+        const userInputBox = document.getElementById('user-input');
+
+        // SEGURIDAD ANTIFRAUDE (BLOQUEO DE COPIAR/PEGAR/ARRASTRAR)
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('copy', e => { e.preventDefault(); alert("Copiado de texto inhabilitado por seguridad del examen."); });
+        document.addEventListener('cut', e => { e.preventDefault(); alert("Acción inhabilitada por seguridad del examen."); });
+        
+        userInputBox.addEventListener('paste', e => {
+            e.preventDefault();
+            alert("Acción de pegado inhabilitada. Por favor redacte sus argumentos manualmente.");
+        });
+        userInputBox.addEventListener('drop', e => {
+            e.preventDefault();
+        });
+
+        wc1.addEventListener('click', () => {
+            const textToInject = "[APORTE PROCESAL: De acuerdo con el Principio de Juridicidad (Art. 3 del COA), toda potestad discrecional de la administración pública está sometida al ordenamiento jurídico constitucional y legal; no existe potestad de exceptuar la norma precontractual por mera conveniencia de celeridad.] ";
+            userInputBox.value += textToInject;
+            wc1.disabled = true;
+            wc1.innerText = "✓ Juridicidad Aplicada";
+            updateCharCounter();
+            userInputBox.focus();
+        });
+
+        wc2.addEventListener('click', () => {
+            const textToInject = "[APORTE PROCESAL: El Principio de Proporcionalidad (Art. 18 del COA) prohíbe que la administración imponga sanciones o clausuras definitivas sin antes agotar la inspección precontractual y dar audiencia al administrado, pues vulnera el debido proceso.] ";
+            userInputBox.value += textToInject;
+            wc2.disabled = true;
+            wc2.innerText = "✓ Proporcionalidad Aplicada";
+            updateCharCounter();
+            userInputBox.focus();
+        });
+
+        // INICIALIZACIÓN Y DETECCIÓN DEL CASO
+        document.getElementById('btn-start').addEventListener('click', async () => {
+            const errorMsg = document.getElementById('error-msg');
+            const btn = document.getElementById('btn-start');
+            btn.innerText = "Procesando...";
+            try {
+                const idInput = document.getElementById('student-id').value.trim();
+                const nameInput = document.getElementById('student-name').value.trim();
+                
+                errorMsg.style.display = 'none';
+                
+                if(!idInput || !nameInput) {
+                    errorMsg.innerText = "Complete sus datos para continuar.";
+                    errorMsg.style.display = 'block';
+                    btn.innerText = "Iniciar Interrogatorio";
+                    return;
+                }
+                
+                if(isNaN(idInput) || idInput.length < 9) {
+                    errorMsg.innerText = "Ingrese una Cédula válida de al menos 9 dígitos numéricos.";
+                    errorMsg.style.display = 'block';
+                    btn.innerText = "Iniciar Interrogatorio";
+                    return;
+                }
+
+                if(!API_KEY || API_KEY.includes("API AQUÍ") || API_KEY.trim() === "") {
+                    errorMsg.innerText = "El docente aún no ha configurado la API Key de Gemini en el código fuente del agente.";
+                    errorMsg.style.display = 'block';
+                    btn.innerText = "Iniciar Interrogatorio";
+                    return;
+                }
+
+                let attempts = 0;
+                try {
+                    attempts = parseInt(localStorage.getItem('admin_lock_' + idInput)) || 0;
+                } catch(e) {}
+
+                if (attempts >= 5) {
+                    document.getElementById('lock-modal').style.display = 'flex';
+                    btn.innerText = "Iniciar Interrogatorio";
+                    return;
+                }
+
+                btn.innerText = "Conectando al Tribunal...";
+                btn.disabled = true;
+                
+                await new Promise(r => setTimeout(r, 600));
+                try {
+                    localStorage.setItem('admin_lock_' + idInput, attempts + 1);
+                } catch(e) {}
+                
+                studentData.id = idInput;
+                studentData.name = nameInput;
+                
+                const lastDigit = parseInt(idInput.slice(-1));
+                let initMessage = "";
+                
+                if (lastDigit % 2 === 0) {
+                    studentData.type = "CASO A: ALCALDE EXPRESS (CONTRATO DIRECTO)";
+                    studentData.classTheme = "alcalde";
+                    window.activeSystemPrompt = promptPar;
+                    initMessage = initPar.replace("[NOMBRE]", studentData.name);
+                } else {
+                    studentData.type = "CASO B: COMISARIO DE HIERRO (CLAUSURA DIRECTA)";
+                    studentData.classTheme = "comisario";
+                    window.activeSystemPrompt = promptImpar;
+                    initMessage = initImpar.replace("[NOMBRE]", studentData.name);
+                }
+                
+                document.getElementById('node-badge').textContent = studentData.type;
+                document.getElementById('disp-id').textContent = studentData.id;
+                document.getElementById('disp-name').textContent = studentData.name;
+                document.getElementById('start-modal').style.display = 'none';
+                
+                document.getElementById('status-text').innerText = "RONDAS RESTANTES: " + MAX_ROUNDS;
+                
+                chatHistory = [
+                    { role: "user", parts: [{ text: "Inicia la evaluación e interrogatorio presentándote basándote en mis datos de cédula." }] },
+                    { role: "model", parts: [{ text: initMessage }] }
+                ];
+                
+                appendMessage('bot', initMessage, false, studentData.classTheme);
+                
+                userInputBox.disabled = false;
+                userInputBox.focus();
+            } catch (err) {
+                errorMsg.innerText = "Error crítico al iniciar: " + err.message;
+                errorMsg.style.display = 'block';
+                document.getElementById('btn-start').innerText = "Iniciar Interrogatorio";
+                document.getElementById('btn-start').disabled = false;
+            }
+        });
+
+        // AUTODETECCIÓN Y FALLBACK DE GEMINI
+        async function fetchWithFallback(payload) {
+            if (!activeModelCache) {
+                document.getElementById('status-text').innerText = "CALIBRANDO MOTOR NEURAL...";
+                try {
+                    const listResponse = await fetch('https://generativelanguage.googleapis.com/v1beta/models?key=' + API_KEY);
+                    if (!listResponse.ok) throw new Error("HTTP " + listResponse.status);
+                    
+                    const data = await listResponse.json();
+                    const validModels = data.models.filter(m => m.supportedGenerationMethods && m.supportedGenerationMethods.includes("generateContent"));
+                    
+                    if (validModels.length === 0) throw new Error("API Key inválida o sin modelos de generación.");
+                    
+                    const prefs = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-1.5-pro", "gemini-1.0", "gemini-pro"];
+                    for (let pref of prefs) {
+                        const found = validModels.find(m => m.name.includes(pref));
+                        if (found) { activeModelCache = found.name; break; }
+                    }
+                    if (!activeModelCache) activeModelCache = validModels[0].name; 
+                } catch (e) {
+                    console.warn("Fallo en autodetección, usando modelo predeterminado: " + e.message);
+                    activeModelCache = "models/gemini-1.5-flash";
+                }
+            }
+            
+            const modelPath = activeModelCache.startsWith("models/") ? activeModelCache : \`models/\${activeModelCache}\`;
+            const url = 'https://generativelanguage.googleapis.com/v1beta/' + modelPath + ':generateContent?key=' + API_KEY;
+            
+            let rondasText = MAX_ROUNDS - round;
+            if (rondasText < 0) rondasText = "DEBATE FINALIZADO";
+            document.getElementById('status-text').innerText = \`TRIBUNAL EN LÍNEA | RONDAS RESTANTES: \${rondasText}\`;
+
+            let retries = 3;
+            while (retries > 0) {
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 60000); 
+                    
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload),
+                        signal: controller.signal
+                    });
+                    
+                    clearTimeout(timeoutId);
+                    if (!response.ok) {
+                        let errMsg = "Error HTTP " + response.status;
+                        if (response.status === 429) {
+                            await new Promise(r => setTimeout(r, 5000));
+                            retries--;
+                            continue;
+                        }
+                        throw new Error(errMsg);
+                    }
+                    return await response.json();
+                } catch (err) {
+                    if (err.name === 'AbortError') {
+                        retries--;
+                        if(retries <= 0) throw new Error("La IA tardó demasiado en responder (Expiración de tiempo).");
+                        continue;
+                    }
+                    throw err; 
+                }
+            }
+        }
+
+        // CONTROLADOR DE COMUNICACIÓN CON GEMINI
+        async function callGemini(userText) {
+            const chatBox = document.getElementById('chat-box');
+            const btnSend = document.getElementById('btn-send');
+            const indicator = document.getElementById('typing-indicator');
+            
+            userInputBox.disabled = true;
+            btnSend.disabled = true;
+            indicator.style.display = 'block';
+            chatBox.appendChild(indicator);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            
+            appendMessage('user', userText);
+            
+            let textForModel = userText;
+            if (round >= MAX_ROUNDS && !abortTriggered) {
+                textForModel += "\\n\\n[INSTRUCCIÓN DEL SISTEMA: Esta es la ronda final del interrogatorio. Analiza rigurosamente si el estudiante logró desmantelar tu postura arbitraria utilizando los conceptos fundamentales del Derecho Administrativo, los principios rectores del COA (como Juridicidad o Proporcionalidad) y las normas sobre nulidad absoluta de los actos administrativos (Art. 105 del COA) que se estudian en la materia.\\nCierra el debate. Emite tu dictamen final en este formato estricto:\\n\\n### DICTAMEN DE AUDITORÍA JURÍDICA\\n**1. Comprensión del Objeto del Derecho Administrativo (Max 3.0 pts):** [Evalúa si el estudiante identificó correctamente el límite al poder público y la naturaleza de las prerrogativas frente a las garantías. Asigna puntaje].\\n**2. Aplicación de Principios del COA (Max 4.0 pts):** [Evalúa la pertinencia técnica de los principios del COA invocados y explicados (ej. Juridicidad y Proporcionalidad) y la subsunción lógica de los hechos a la norma. Asigna puntaje].\\n**3. Solidez en la Argumentación Jurídica (Max 3.0 pts):** [Evalúa la firmeza, tecnicismo y profesionalismo del estudiante al desarmar tus falacias en las 3 rondas. Asigna puntaje].\\n**Calificación Total Sugerida:** [Suma de puntos]/10.0\\n\\n[Escribe un breve párrafo final de cierre en tu rol de funcionario derrotado reconociendo formalmente que tu acto administrativo adolece de nulidad absoluta y te ves obligado a revocarlo o enviarlo al archivo por violar el procedimiento legal]]";
+            }
+            
+            chatHistory.push({ role: "user", parts: [{ text: textForModel }] });
+            
+            try {
+                const data = await fetchWithFallback({
+                    systemInstruction: { parts: [{ text: window.activeSystemPrompt }] },
+                    contents: chatHistory,
+                    generationConfig: { temperature: 0.25 },
+                    safetySettings: safetyOverrides
+                });
+                
+                const botReply = data.candidates[0].content.parts[0].text;
+                chatHistory.push({ role: "model", parts: [{ text: botReply }] });
+                indicator.style.display = 'none';
+                
+                appendMessage('bot', marked.parse(botReply), true, studentData.classTheme);
+                
+                if (round >= MAX_ROUNDS) {
+                    finalizarSimulacion(botReply);
+                } else {
+                    userInputBox.disabled = false;
+                    userInputBox.value = ''; 
+                    updateCharCounter();
+                    userInputBox.focus();
+                }
+            } catch (error) {
+                indicator.style.display = 'none';
+                alert("Error de procesamiento del Tribunal: " + error.message);
+                chatHistory.pop();
+                userInputBox.disabled = false;
+                btnSend.disabled = false;
+            }
+        }
+
+        // FINALIZACIÓN Y DICTAMEN DE ACTA
+        function finalizarSimulacion(botReply) {
+            document.getElementById('input-area').style.display = 'none';
+            
+            let dictamenTexto = botReply;
+            const dictamenIndex = botReply.indexOf("### DICTAMEN DE AUDITORÍA");
+            if (dictamenIndex !== -1) {
+                dictamenTexto = botReply.substring(dictamenIndex);
+            }
+            
+            let hostCode = generateHostCode(studentData.id, dictamenTexto);
+            const leyenda = "**INTERROGATORIO CONCLUIDO.** Descargue su acta oficial en PDF y adjunte la evidencia en Moodle.";
+            appendMessage('bot', marked.parse(leyenda), true, studentData.classTheme);
+            transcriptLog.pop(); // Evitar que la leyenda final ensucie el PDF
+            
+            let dictamenHtmlFinal = marked.parse(dictamenTexto) + "<br><br><div style='background-color:#f8fafc; border:1px solid #cbd5e1; padding:15px; border-radius:8px; font-family:monospace; font-size:13px; font-weight:bold; color:#0a0d16; text-align:center;'>🔑 CÓDIGO HOST DE SEGURIDAD MOODLE: " + hostCode + "</div>";
+            prepararActaPDF(dictamenHtmlFinal);
+            
+            document.getElementById('status-text').style.display = 'none';
+            document.getElementById('pdf-area').style.display = 'flex';
+            
+            const chatBox = document.getElementById('chat-box');
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function prepararActaPDF(htmlDictamen) {
+            document.getElementById('pdf-name').innerText = studentData.name;
+            document.getElementById('pdf-id').innerText = studentData.id;
+            document.getElementById('pdf-nodo').innerText = studentData.type;
+            document.getElementById('pdf-date').innerText = new Date().toLocaleString();
+            
+            const transcriptContainer = document.getElementById('pdf-transcript');
+            transcriptContainer.innerHTML = '';
+            
+            transcriptLog.forEach(log => {
+                if(log.text.includes("Inicia la evaluación e interrogatorio")) return;
+                const roleClass = log.role === 'bot' ? 't-bot' : 't-user';
+                const roleName = log.role === 'bot' ? "🤖 AUTORIDAD [" + studentData.type + "]" : "🎓 ESTUDIANTE DE DERECHO [" + studentData.name + "]";
+                
+                transcriptContainer.innerHTML += "<div class='" + roleClass + "'>" + roleName + "</div><div class='t-content'>" + log.text + "</div>";
+            });
+            
+            document.getElementById('pdf-dictamen').innerHTML = htmlDictamen;
+        }
+
+        // MANEJO DE CAJA DE TEXTO Y BOTÓN DE ENVÍO
+        const charCounter = document.getElementById('char-counter');
+        const btnSend = document.getElementById('btn-send');
+        
+        function updateCharCounter() {
+            const textLen = userInputBox.value.trim().length;
+            charCounter.innerText = "Caracteres: " + textLen + " / Rango: 200 - 1500";
+            if (textLen >= 200 && textLen <= 1500) {
+                charCounter.classList.remove('error');
+                btnSend.disabled = false;
+            } else {
+                charCounter.classList.add('error');
+                btnSend.disabled = true;
+            }
+            if(userInputBox.disabled) btnSend.disabled = true;
+        }
+
+        userInputBox.addEventListener('input', () => {
+            updateCharCounter();
+        });
+
+        btnSend.addEventListener('click', () => {
+            if(abortTriggered) return;
+            const text = userInputBox.value.trim();
+            if(text.length < 200 || text.length > 1500) {
+                alert("Violación de Formato. Su argumentación procesal debe contener entre 200 y 1500 caracteres."); return;
+            }
+            round++;
+            callGemini(text);
+        });
+
+        function appendMessage(sender, text, isHTML = false, extraClass = '') {
+            const chatBox = document.getElementById('chat-box');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = "message " + sender + (extraClass ? " " + extraClass : "");
+            
+            const avatarDiv = document.createElement('div');
+            avatarDiv.className = 'avatar';
+            avatarDiv.innerText = sender === 'bot' ? 'Autoridad Pública (IA)' : studentData.name;
+            
+            const textDiv = document.createElement('div');
+            if (isHTML) textDiv.innerHTML = text;
+            else textDiv.innerText = text;
+            
+            msgDiv.appendChild(avatarDiv);
+            msgDiv.appendChild(textDiv);
+            
+            chatBox.insertBefore(msgDiv, document.getElementById('typing-indicator'));
+            chatBox.scrollTop = chatBox.scrollHeight;
+            
+            transcriptLog.push({
+                role: sender,
+                text: isHTML ? text.replace(/<[^>]*>?/gm, '') : text
+            });
+        }
+
+        // EXPORTADOR A PDF
+        document.getElementById('btn-download').addEventListener('click', () => {
+            const acta = document.getElementById('acta-auditable-moodle');
+            const appCapture = document.querySelector('.app-container');
+            const btn = document.getElementById('btn-download');
+            
+            btn.innerHTML = "Generando PDF Certificado...";
+            btn.disabled = true;
+            
+            appCapture.style.display = 'none';
+            acta.style.display = 'block';
+            
+            setTimeout(() => {
+                html2pdf().set({
+                    margin: 15,
+                    filename: "Acta_TribunalCOA_" + studentData.id + ".pdf",
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                    pagebreak: { mode: ['css', 'legacy'] }
+                }).from(acta).save().then(() => {
+                    acta.style.display = 'none';
+                    appCapture.style.display = 'flex';
+                    btn.disabled = false;
+                    btn.innerHTML = "Descargar Acta Oficial en PDF";
+                });
+            }, 800);
+        });
+    ` + "</sc" + "ript>" + `
+    </body>
+    </html>
+    `;
+
+    // =====================================================================
+    // 3. INYECCIÓN EN EL IFRAME (BYPASS)
+    // =====================================================================
+    setTimeout(function() {
+        const iframe = document.getElementById('tribunal-sandbox');
+        if (iframe) {
+            const doc = iframe.contentWindow.document;
+            doc.open();
+            doc.write(htmlPayload);
+            doc.close();
+        }
+    }, 500);
+})();
+//]]>
+</script>
