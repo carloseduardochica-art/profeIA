@@ -458,6 +458,10 @@
                 <label>Nombres Completos</label>
                 <input type="text" id="student-name" placeholder="Ej. Juan Pérez" autocomplete="off">
             </div>
+            <div class="input-group">
+                <label>Clave API (Docente)</label>
+                <input type="password" id="api-key-input" placeholder="Pegue la API Key aquí..." autocomplete="off">
+            </div>
             
             <div id="error-msg" style="color: #fbbf24; background: rgba(251, 191, 36, 0.1); padding: 8px; border-radius: 4px; font-size: 14px; margin-bottom: 15px; display: none;"></div>
             <button type="button" class="btn-start" id="btn-start">Ingresar al Debate</button>
@@ -546,15 +550,7 @@
     </div>
 </div>
 ` + "<sc" + "ript>\n" + `
-    let API_KEY = sessionStorage.getItem("GEMINI_API_KEY");
-    if (!API_KEY || API_KEY === "${CLAVE_API_DOCENTE}" || API_KEY.trim() === "") {
-        API_KEY = prompt("Por favor, ingrese la Clave API (API Key) proporcionada por el profesor para activar la IA:");
-        if (API_KEY) {
-            sessionStorage.setItem("GEMINI_API_KEY", API_KEY);
-        } else {
-            alert("Advertencia: Sin la Clave API el simulador no podrá conectarse con la IA. Recarga la página si deseas ingresarla.");
-        }
-    }
+    let API_KEY = sessionStorage.getItem("GEMINI_API_KEY") || "";
     
     window.onerror = function(msg, url, lineNo, columnNo, error) {
         const errDiv = document.getElementById('error-msg');
@@ -688,6 +684,17 @@
         try {
             const idInput = document.getElementById('student-id').value.trim();
             const nameInput = document.getElementById('student-name').value.trim();
+            const apiInput = document.getElementById('api-key-input').value.trim();
+            
+            if (apiInput) {
+                API_KEY = apiInput;
+                sessionStorage.setItem("GEMINI_API_KEY", API_KEY);
+            } else if (!API_KEY) {
+                errorMsg.innerText = "Debe ingresar la Clave API para continuar.";
+                errorMsg.style.display = 'block';
+                btn.innerText = "Ingresar al Debate";
+                return;
+            }
             
             errorMsg.style.display = 'none';
             
@@ -1014,4 +1021,18 @@
 //]]>
 ` + "</sc" + "ript>";
 
-    // ================
+    // =====================================================================
+    // 3. INYECCIÓN EN EL IFRAME (BYPASS)
+    // =====================================================================
+    setTimeout(function() {
+        const iframe = document.getElementById('coliseo-sandbox');
+        if (iframe) {
+            const doc = iframe.contentWindow.document;
+            doc.open();
+            doc.write(htmlPayload);
+            doc.close();
+        }
+    }, 500);
+})();
+//]]>
+</script>
