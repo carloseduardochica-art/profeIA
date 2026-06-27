@@ -424,9 +424,7 @@
         
         #acta-auditable-moodle .acta-section-title { font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 900; color: #1A1A1A; text-transform: uppercase; border-bottom: 2px solid #E2E8F0; padding-bottom: 5px; margin-top: 30px; margin-bottom: 15px; }
         
-        #acta-auditable-moodle .acta-transcript { font-size: 12.5px; line-height: 1.6; margin-bottom: 20px; color: #000000; }
-        #acta-auditable-moodle .t-content, #acta-auditable-moodle .t-bot, #acta-auditable-moodle .t-user { color: #000000 !important; }
-        #acta-auditable-moodle p, #acta-auditable-moodle strong, #acta-auditable-moodle li, #acta-auditable-moodle h1, #acta-auditable-moodle h2, #acta-auditable-moodle h3 { color: #000000 !important; }
+        #acta-auditable-moodle .acta-transcript { font-size: 12.5px; line-height: 1.6; margin-bottom: 20px; color: #000000; }\n        #acta-auditable-moodle .t-content, #acta-auditable-moodle .t-bot, #acta-auditable-moodle .t-user { color: #000000 !important; }\n        #acta-auditable-moodle p, #acta-auditable-moodle strong, #acta-auditable-moodle li, #acta-auditable-moodle h1, #acta-auditable-moodle h2, #acta-auditable-moodle h3 { color: #000000 !important; }
 
         /* Ajustes específicos para exportación PDF */
         .pdf-export-mode .app-container { height: auto !important; overflow: visible !important; border: none !important; box-shadow: none !important; }
@@ -459,10 +457,6 @@
             <div class="input-group">
                 <label>Nombres Completos</label>
                 <input type="text" id="student-name" placeholder="Ej. Juan Pérez" autocomplete="off">
-            </div>
-            <div class="input-group">
-                <label>Clave API (Docente)</label>
-                <input type="password" id="api-key-input" placeholder="Pegue la API Key aquí..." autocomplete="off">
             </div>
             
             <div id="error-msg" style="color: #fbbf24; background: rgba(251, 191, 36, 0.1); padding: 8px; border-radius: 4px; font-size: 14px; margin-bottom: 15px; display: none;"></div>
@@ -552,7 +546,7 @@
     </div>
 </div>
 ` + "<sc" + "ript>\n" + `
-    let API_KEY = sessionStorage.getItem("GEMINI_API_KEY") || "";
+    const API_KEY = "${CLAVE_API_DOCENTE}";
     
     window.onerror = function(msg, url, lineNo, columnNo, error) {
         const errDiv = document.getElementById('error-msg');
@@ -686,17 +680,6 @@
         try {
             const idInput = document.getElementById('student-id').value.trim();
             const nameInput = document.getElementById('student-name').value.trim();
-            const apiInput = document.getElementById('api-key-input').value.trim();
-            
-            if (apiInput) {
-                API_KEY = apiInput;
-                sessionStorage.setItem("GEMINI_API_KEY", API_KEY);
-            } else if (!API_KEY) {
-                errorMsg.innerText = "Debe ingresar la Clave API para continuar.";
-                errorMsg.style.display = 'block';
-                btn.innerText = "Ingresar al Debate";
-                return;
-            }
             
             errorMsg.style.display = 'none';
             
@@ -1025,4 +1008,16 @@
 
     // =====================================================================
     // 3. INYECCIÓN EN EL IFRAME (BYPASS)
-    // =================
+    // =====================================================================
+    setTimeout(function() {
+        const iframe = document.getElementById('coliseo-sandbox');
+        if (iframe) {
+            const doc = iframe.contentWindow.document;
+            doc.open();
+            doc.write(htmlPayload);
+            doc.close();
+        }
+    }, 500);
+})();
+//]]>
+</script>
