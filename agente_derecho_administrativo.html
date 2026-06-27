@@ -561,7 +561,15 @@
     </div>
 
     <script>
-        const API_KEY = "${CLAVE_API_DOCENTE}";
+        let API_KEY = sessionStorage.getItem("GEMINI_API_KEY");
+        if (!API_KEY || API_KEY === "${CLAVE_API_DOCENTE}" || API_KEY.trim() === "") {
+            API_KEY = prompt("Por favor, ingrese la Clave API (API Key) proporcionada por el profesor para activar la IA:");
+            if (API_KEY) {
+                sessionStorage.setItem("GEMINI_API_KEY", API_KEY);
+            } else {
+                alert("Advertencia: Sin la Clave API el simulador no podrá conectarse con la IA. Recarga la página si deseas ingresarla.");
+            }
+        }
         
         window.onerror = function(msg, url, lineNo, columnNo, error) {
             const errDiv = document.getElementById('error-msg');
@@ -1027,20 +1035,3 @@
     ` + "</sc" + "ript>" + `
     </body>
     </html>
-    `;
-
-    // =====================================================================
-    // 3. INYECCIÓN EN EL IFRAME (BYPASS)
-    // =====================================================================
-    setTimeout(function() {
-        const iframe = document.getElementById('tribunal-sandbox');
-        if (iframe) {
-            const doc = iframe.contentWindow.document;
-            doc.open();
-            doc.write(htmlPayload);
-            doc.close();
-        }
-    }, 500);
-})();
-//]]>
-</script>
